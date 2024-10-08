@@ -52,12 +52,12 @@ jobs:
         mkdir -p path/to/dir-1
         mkdir -p path/to/dir-2
         mkdir -p path/to/dir-3
-        mkdir -p symlink/subdirectory
         echo "Lorem ipsum dolor sit amet" > path/to/dir-1/file1.txt
         echo "Hello world from file #2" > path/to/dir-2/file2.txt
         echo "Hello from a symlinked file" > symlink/original.txt
         ln -s $(pwd)/symlink/original.txt symlink/file.txt
         ln -s symlink/original.txt symlink/relative.txt
+        cat symlink/relative.txt | grep "Hello from a symlinked file"
       shell: bash
 
     # Upload a single file artifact
@@ -95,6 +95,7 @@ jobs:
       with:
         name: 'Relatively-Symlinked-Artifact-${{ matrix.runs-on }}'
         path: symlink/relative.txt
+        if-no-files-found: error
 
     # Download Artifact #1 and verify the correctness of the content
     - name: 'Download artifact #1'
@@ -165,19 +166,6 @@ jobs:
         path: from/symlink
 
     - name: 'Verify symlinked artifact'
-      run: |
-        $file = "from/symlink/file.txt"
-        if(!(Test-Path -path $file))
-        {
-            Write-Error "Expected file does not exist"
-        }
-        if(!((Get-Content $file) -ceq "Hello from a symlinked file"))
-        {
-            Write-Error "File contents of downloaded artifact are incorrect"
-        }
-      shell: pwsh
-
-    - name: 'Verify relatively symlinked artifact'
       run: |
         $file = "from/symlink/file.txt"
         if(!(Test-Path -path $file))
