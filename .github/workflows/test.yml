@@ -57,7 +57,7 @@ jobs:
         echo "Hello world from file #2" > path/to/dir-2/file2.txt
         echo "Hello from a symlinked file" > symlink/original.txt
         ln -s $(pwd)/symlink/original.txt symlink/file.txt
-        ln -s symlink/original.txt symlink/relative.txt
+        ln -s ../symlink/original.txt symlink/relative.txt
         cat symlink/relative.txt | grep "Hello from a symlinked file"
       shell: bash
 
