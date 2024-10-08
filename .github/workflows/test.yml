@@ -57,6 +57,8 @@ jobs:
         echo "Hello world from file #2" > path/to/dir-2/file2.txt
         echo "Hello from a symlinked file" > symlink/original.txt
         ln -s $(pwd)/symlink/original.txt symlink/file.txt
+        ln -s ../symlink/original.txt symlink/relative.txt
+        cat symlink/relative.txt | grep "Hello from a symlinked file"
       shell: bash
 
     # Upload a single file artifact
@@ -88,6 +90,13 @@ jobs:
       with:
         name: 'Symlinked-Artifact-${{ matrix.runs-on }}'
         path: symlink/file.txt
+
+    - name: 'Upload relatively symlinked artifact'
+      uses: ./
+      with:
+        name: 'Relatively-Symlinked-Artifact-${{ matrix.runs-on }}'
+        path: symlink/relative.txt
+        if-no-files-found: error
 
     # Download Artifact #1 and verify the correctness of the content
     - name: 'Download artifact #1'
